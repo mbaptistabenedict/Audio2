@@ -1,0 +1,44 @@
+<style>
+  body {
+    background-image: 
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+
+<p>click anywhere on the page to start</p>
+
+<script>
+  const ctx = new window.AudioContext()
+  const src = ctx.createBufferSource()
+  const gn = ctx.createGain()
+  
+  src.loop = true
+  src.playbackRate.value = 5 // play at 3x speed
+  src.connect(gn)
+  gn.connect(ctx.destination)
+
+  
+  function decodeAudioData (data) {
+    ctx.decodeAudioData(data, (buffer) => {
+      src.buffer = buffer
+    })
+  }
+  
+  // (audio recording by orangefreesounds)
+  // (https://freesound.org/people/orangefreesounds/sounds/329855/)
+  fetch('audios/electric-piano-chords.mp3')
+    .then(res => res.arrayBuffer())
+    .then(data => decodeAudioData(data))
+  
+  document.body.addEventListener('click', () => {
+    src.start()
+    // uncomment lines below to hear the playback rate change over time
+    // src.playbackRate.setValueAtTime(1, ctx.currentTime)
+    // src.playbackRate.linearRampToValueAtTime(3, ctx.currentTime + 2)
+    // src.playbackRate.linearRampToValueAtTime(1, ctx.currentTime + 4)
+  })
+</script>
